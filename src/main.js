@@ -203,7 +203,7 @@ function onEvent(e) {
   switch (e.type) {
     case 'trick': feed(e.name, `+${e.points.toFixed(2).replace('.', ',')}`, e.kind); if (e.kind === 'air') audio.whoosh(); break;
     case 'message': flash(e.text, e.tone); break;
-    case 'ready': prompt('AUFSTEHEN!', 'Leertaste / Sprung-Taste – jetzt!', 1, true); break;
+    case 'ready': prompt('AUFSTEHEN!', isTouch ? 'SPRUNG tippen – jetzt!' : 'Leertaste / Sprung-Taste – jetzt!', 1, true); break;
     case 'popup': hidePrompt(); flash(e.perfect ? 'Perfekter Take-off' : 'Drin!', 'good'); audio.splash(0.8); break;
     case 'wipeout': flash(`WIPEOUT · ${e.reason}`, 'bad'); audio.splash(1.6); break;
     case 'respawn': flash('Weiter geht’s', 'good'); break;
@@ -387,7 +387,7 @@ function updateHUD() {
   $('pts').textContent = fmt(r.total);
   $('wscore').textContent = fmt(waveScore(r.total));
   $('speed').textContent = `${Math.round(r.state === 'air' ? r.vel.length() * 3.6 : r.v * 3.6)} km/h`;
-  if (r.state === 'paddle' && !r.ready) prompt('PADDELN', '↑ wiederholt drücken, bis die Welle dich nimmt', r.meter);
+  if (r.state === 'paddle' && !r.ready) prompt('PADDELN', isTouch ? '▲ wiederholt tippen, bis die Welle dich nimmt' : '↑ wiederholt drücken, bis die Welle dich nimmt', r.meter);
   if (r.tube.on) {
     $('tube-time').textContent = `${r.tube.t.toFixed(1).replace('.', ',')} s`;
     $('tube-depth').style.transform = `scaleX(${r.tube.depth.toFixed(3)})`;
@@ -543,7 +543,8 @@ window.addEventListener('keydown', (e) => {
     if (e.code === 'Enter') startRun();
   } else if (mode === 'results' && e.code === 'Enter') startRun();
 });
-if (matchMedia('(pointer: coarse)').matches) document.body.classList.add('touch');
+const isTouch = matchMedia('(pointer: coarse)').matches;
+if (isTouch) document.body.classList.add('touch');
 
 // ------------------------------------------------------------------ loop
 const clock = new THREE.Clock();

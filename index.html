@@ -136,6 +136,23 @@
   .pad [data-pad=up] { grid-area: 1 / 2; } .pad [data-pad=left] { grid-area: 2 / 1; } .pad [data-pad=right] { grid-area: 2 / 3; } .pad [data-pad=down] { grid-area: 3 / 2; }
   .jump { display: none; position: fixed; right: max(20px, env(safe-area-inset-right, 0px)); bottom: max(120px, calc(env(safe-area-inset-bottom, 0px) + 120px)); width: 88px; height: 88px; border-radius: 50%; font-family: var(--display); font-weight: 900; font-size: 1.1rem; letter-spacing: 0.06em; }
   body.touch .jump { display: block; }
+  /* on touch the trick feed moves up so the thumbs don't cover it */
+  body.touch #feed { position: fixed; top: max(84px, calc(env(safe-area-inset-top, 0px) + 84px)); left: max(16px, env(safe-area-inset-left, 0px)); }
+  #rotate { display: none; }
+  @media (orientation: portrait) {
+    body.touch #rotate { display: block; position: fixed; left: 50%; bottom: max(20px, env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); font-family: var(--cond); font-size: 0.85rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); white-space: nowrap; pointer-events: none; }
+    body.touch .peel { display: none; }
+  }
+  @media (max-height: 520px) {
+    .pad { bottom: max(16px, env(safe-area-inset-bottom, 0px)); grid-template-columns: repeat(3, 50px); grid-template-rows: repeat(3, 50px); }
+    .jump { bottom: max(24px, env(safe-area-inset-bottom, 0px)); width: 76px; height: 76px; }
+    .hud-mid { top: 24%; width: min(420px, calc(100% - 340px)); }
+    #prompt { padding: 8px 14px 10px; }
+    #prompt-title { font-size: 1.8rem; }
+    .peel { position: fixed; left: 50%; bottom: max(12px, env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); width: min(240px, 34vw); }
+    #timer { font-size: 2rem; }
+    .scorebox b { font-size: 1.4rem; }
+  }
 
   /* ---------- results / pause ---------- */
   #results, #pause { align-items: center; justify-content: center; background: rgba(4, 20, 28, 0.55); }
@@ -150,10 +167,19 @@
   #res-tricks li span:first-child { font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
   #res-tricks li.empty { color: var(--muted); }
 
-  @media (max-width: 720px) {
-    #menu { flex-direction: column; background: linear-gradient(180deg, rgba(4, 20, 28, 0.9) 0%, rgba(4, 20, 28, 0.6) 100%); overflow-y: auto; }
-    .menu-col { width: 100%; }
+  /* small screens: the menu scrolls as a whole instead of squeezing its columns */
+  @media (max-width: 720px), (max-height: 520px) {
+    #menu { overflow-y: auto; }
+    .menu-col { flex-shrink: 0; }
     #spot-list { overflow: visible; }
+  }
+  @media (max-height: 520px) and (min-width: 721px) {
+    #menu { align-items: flex-start; }
+    .menu-col { flex: 1 1 0; min-width: 0; width: auto; }
+  }
+  @media (max-width: 720px) {
+    #menu { flex-direction: column; background: linear-gradient(180deg, rgba(4, 20, 28, 0.9) 0%, rgba(4, 20, 28, 0.6) 100%); }
+    .menu-col { width: 100%; }
     .hud-top { grid-template-columns: 1fr auto; }
     .hud-spot { display: none; }
     #timer { font-size: 2rem; }
@@ -245,6 +271,7 @@
     <button type="button" data-pad="down" aria-label="Bremsen">▼</button>
   </div>
   <button class="jump" type="button" data-pad="jump">SPRUNG</button>
+  <div id="rotate">Handy quer halten für mehr Übersicht</div>
 </div>
 
 <div id="pause" class="overlay" hidden>
